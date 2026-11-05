@@ -1,0 +1,19 @@
+# Сборка .NET
+bin/
+obj/
+*.user
+*.suo
+
+# IDE
+.idea/
+.vs/
+.vscode/
+
+# macOS
+.DS_Store
+
+# Локальные секреты и БД
+appsettings.Local.json
+*.db
+*.db-shm
+*.db-wal

@@ -22,4 +22,9 @@
         </PackageReference>
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2"/>
     </ItemGroup>
+    <!-- DTO живут в Viper.Api/Dtos — один источник правды для API и десктопа.
+         Здесь они подключаются ссылкой на файлы, без третьего проекта. -->
+    <ItemGroup>
+        <Compile Include="..\Viper.Api\Dtos\**\*.cs" Link="Dtos\%(RecursiveDir)%(Filename)%(Extension)"/>
+    </ItemGroup>
 </Project>

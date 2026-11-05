@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Viper: роли команды</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f5f2; --surface:#ffffff; --ink:#1b1b1f; --muted:#5f6068; --line:#e3e1dc;
+  --a:#2f5bd3; --a-soft:#e8eefc; --b:#0f8a6a; --b-soft:#e3f4ee; --warn:#b5541b; --warn-soft:#fbeee4;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#131317; --surface:#1c1c22; --ink:#ececf0; --muted:#a2a3ad; --line:#2d2d36;
+    --a:#7d9cf5; --a-soft:#1f2740; --b:#4fcda6; --b-soft:#17302a; --warn:#f0a070; --warn-soft:#352419;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#131317; --surface:#1c1c22; --ink:#ececf0; --muted:#a2a3ad; --line:#2d2d36;
+  --a:#7d9cf5; --a-soft:#1f2740; --b:#4fcda6; --b-soft:#17302a; --warn:#f0a070; --warn-soft:#352419;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 Inter,system-ui,sans-serif}
+main{max-width:1080px;margin:0 auto;padding:40px 16px 64px}
+h1{font-size:30px;line-height:1.2;margin:0 0 8px;letter-spacing:-.02em}
+h2{font-size:20px;margin:48px 0 14px;letter-spacing:-.01em}
+h3{font-size:16px;margin:0}
+p{margin:0 0 10px}
+.lead{color:var(--muted);max-width:720px}
+code{font:13px/1.4 "JetBrains Mono",monospace;background:var(--line);padding:1px 5px;border-radius:4px}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px}
+@media (max-width:760px){.split{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px}
+.who{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:2px solid var(--c);margin-bottom:14px}
+.who .tag{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--c)}
+.who .h{font-weight:700;font-size:18px;font-variant-numeric:tabular-nums;color:var(--c)}
+.A{--c:var(--a);--soft:var(--a-soft)} .B{--c:var(--b);--soft:var(--b-soft)}
+.task{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.task:last-child{border-bottom:0}
+.task b{font-weight:600}
+.task .hrs{font-variant-numeric:tabular-nums;color:var(--muted);font-size:13px;white-space:nowrap}
+.task ul{grid-column:1/-1;margin:4px 0 0;padding-left:18px;color:var(--muted);font-size:14px}
+.task li{margin:2px 0}
+.bar{display:flex;height:10px;border-radius:5px;overflow:hidden;margin:18px 0 6px;gap:2px}
+.bar span{display:block}
+.legend{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+.callout{background:var(--warn-soft);border-left:3px solid var(--warn);padding:14px 16px;border-radius:0 8px 8px 0;margin-top:20px}
+.callout b{color:var(--warn)}
+table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600}
+tr:last-child td{border-bottom:0}
+.pill{display:inline-block;font-size:12px;font-weight:600;padding:1px 8px;border-radius:99px;background:var(--soft);color:var(--c)}
+.both{--c:var(--ink);--soft:var(--line)}
+.scroll{overflow-x:auto}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:760px){.grid3{grid-template-columns:1fr}}
+.mini{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;font-size:14px}
+.mini .n{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+pre{font:13px/1.6 "JetBrains Mono",monospace;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;overflow-x:auto;margin:0}
+</style>
+</head>
+<body>
+<main>
+  <h1>Viper: кто что делает</h1>
+  <p class="lead">Практическая №4: мини-маркетплейс (БД в 3НФ → API → десктоп). Делим на двоих: <b style="color:var(--a)">Человек A</b> — архитектура и бэкенд, <b style="color:var(--b)">Человек B</b> — база данных и фронт. Оценка в часах, чтобы было видно, что нагрузка примерно 50/50.</p>
+
+  <div class="bar" aria-label="Нагрузка: A 37 ч, B 37 ч">
+    <span style="flex:37;background:var(--a)"></span><span style="flex:37;background:var(--b)"></span>
+  </div>
+  <div class="legend"><span>A: архитектура + API ≈ 37 ч</span><span>B: БД + UI ≈ 37 ч</span></div>
+
+  <div class="split">
+    <section class="card A">
+      <div class="who"><div><div class="tag">Человек A</div><h3>Архитектура + Бэкенд</h3></div><div class="h">37 ч</div></div>
+
+      <div class="task"><b>Архитектура решения</b><span class="hrs">4 ч</span>
+        <ul><li>Структура солюшена, проект <code>Viper.Contracts</code> (общие DTO для API и десктопа)</li>
+        <li>Слои в API: Controllers → Services → <code>ViperDbContext</code></li>
+        <li>Глобальная обработка ошибок (ProblemDetails), Swagger с JWT-кнопкой</li></ul></div>
+
+      <div class="task"><b>Регистрация и вход</b><span class="hrs">6 ч</span>
+        <ul><li>Рега: логин, пароль, повтор пароля — сверка на сервере</li>
+        <li>Хеш пароля (<code>PasswordHasher</code> / BCrypt), никакого открытого текста</li>
+        <li>JWT, роли User/Admin, политики <code>[Authorize(Roles="Admin")]</code></li></ul></div>
+
+      <div class="task"><b>Каталог (публичный)</b><span class="hrs">4 ч</span>
+        <ul><li>Список товаров: поиск по названию, фильтр по категории, цена от–до</li>
+        <li>Карточка товара; рейтинг считается <code>AVG(Rating)</code> по отзывам</li>
+        <li>Категории, ПВЗ — чтение без авторизации</li></ul></div>
+
+      <div class="task"><b>Корзина + избранное</b><span class="hrs">5 ч</span>
+        <ul><li>Добавить / изменить количество / удалить, итоговая сумма</li>
+        <li>Проверка остатка на складе и флага «доступен» (не дать заказать 1488 из 3)</li>
+        <li>Избранное без дублей, «перенести в корзину»</li></ul></div>
+
+      <div class="task"><b>Заказы — главная логика</b><span class="hrs">8 ч</span>
+        <ul><li>«Купить сейчас» и «оформить корзину» через один сервис</li>
+        <li>Правило 600 ₽: меньше — только ПВЗ; проверка на сервере, не в UI</li>
+        <li>Транзакция: снапшот цены в <code>OrderItems.UnitPrice</code>, списание остатка, очистка корзины</li>
+        <li>История своих заказов с сортировкой по дате, чужие — 403/404</li></ul></div>
+
+      <div class="task"><b>Отзывы</b><span class="hrs">2 ч</span>
+        <ul><li>Читать — всем, писать — авторизованным, оценка 1–5, дата</li></ul></div>
+
+      <div class="task"><b>Админские эндпоинты</b><span class="hrs">4 ч</span>
+        <ul><li>CRUD товаров, вкл/выкл товара, категории, ПВЗ</li>
+        <li>Все заказы + смена статуса, удаление отзыва</li></ul></div>
+
+      <div class="task"><b>HTTP-клиент для десктопа</b><span class="hrs">4 ч</span>
+        <ul><li><code>IApiClient</code> в десктопе: типизированные методы под каждый эндпоинт, хранение токена, обработка 401/400</li>
+        <li>Интерфейс выкладывается рано, чтобы B мог верстать экраны на заглушке</li></ul></div>
+    </section>
+
+    <section class="card B">
+      <div class="who"><div><div class="tag">Человек B</div><h3>База данных + Фронт</h3></div><div class="h">37 ч</div></div>
+
+      <div class="task"><b>Проектирование БД в 3НФ</b><span class="hrs">3 ч</span>
+        <ul><li>ER-диаграмма: Users, Roles, Products, Categories, Carts, CartItems, Favorites, Orders, OrderItems, Reviews, PickupPoints, OrderStatuses</li>
+        <li>Обоснование 3НФ для защиты (почему рейтинг не хранится, зачем цена в OrderItems)</li></ul></div>
+
+      <div class="task"><b>EF Core: сущности и конфигурация</b><span class="hrs">4 ч</span>
+        <ul><li>Проект <code>Viper.Data</code>: сущности, <code>ViperDbContext</code>, Fluent API</li>
+        <li>Уникальные индексы: логин, (UserId, ProductId) в Favorites и CartItems</li>
+        <li>Check-ограничения: оценка 1–5, количество ≥ 0, точность <code>decimal</code></li></ul></div>
+
+      <div class="task"><b>Миграции + сиды</b><span class="hrs">2 ч</span>
+        <ul><li>Роли, админ, категории, 15–20 товаров с фотками, ПВЗ, статусы заказов</li></ul></div>
+
+      <div class="task"><b>Каркас десктопа</b><span class="hrs">3 ч</span>
+        <ul><li>MVVM на CommunityToolkit, навигация между экранами, DI</li>
+        <li>Состояние сессии: гость / юзер / админ — что показывать</li></ul></div>
+
+      <div class="task"><b>Вход / регистрация</b><span class="hrs">2 ч</span></div>
+
+      <div class="task"><b>Каталог + карточка товара</b><span class="hrs">7 ч</span>
+        <ul><li>Сетка товаров с фото, поиск, фильтры категория и цена</li>
+        <li>Карточка: описание, остаток, рейтинг, отзывы, форма отзыва, ♥, «в корзину», «купить сейчас»</li></ul></div>
+
+      <div class="task"><b>Корзина + избранное</b><span class="hrs">4 ч</span></div>
+
+      <div class="task"><b>Оформление заказа</b><span class="hrs">3 ч</span>
+        <ul><li>Выбор доставка/ПВЗ (UI повторяет правило 600 ₽, но решает сервер), адрес, список ПВЗ</li></ul></div>
+
+      <div class="task"><b>Мои заказы + детали заказа</b><span class="hrs">3 ч</span></div>
+
+      <div class="task"><b>Админка</b><span class="hrs">6 ч</span>
+        <ul><li>Товары (форма с выбором картинки, вкл/выкл), категории, ПВЗ</li>
+        <li>Все заказы со сменой статуса, модерация отзывов</li></ul></div>
+    </section>
+  </div>
+
+  <div class="callout"><b>Важно про WPF.</b> В задании сказано WPF, а у вас <code>Viper.Desktop</code> на Avalonia (WPF не работает на macOS). Логика та же — MVVM + HTTP к API — но лучше заранее спросить преподавателя, засчитают ли Avalonia.</div>
+
+  <h2>Порядок работы</h2>
+  <div class="grid3">
+    <div class="mini"><div class="n">Этап 0 · вместе · 1 пара</div><p>Согласовать ER-схему и список эндпоинтов с DTO. Это контракт: дальше каждый работает у себя и не ждёт другого.</p></div>
+    <div class="mini"><div class="n">Этап 1 · параллельно</div><p><b style="color:var(--b)">B</b>: сущности, DbContext, миграция, сиды — отдаёт первым, A на этом строит сервисы.<br><b style="color:var(--a)">A</b>: каркас API, Contracts, авторизация, интерфейс <code>IApiClient</code>.</p></div>
+    <div class="mini"><div class="n">Этап 2 · параллельно</div><p><b style="color:var(--a)">A</b>: эндпоинты по порядку: каталог → корзина → заказы → админка.<br><b style="color:var(--b)">B</b>: экраны на заглушке <code>IApiClient</code>, потом подключает реальный клиент.</p></div>
+  </div>
+
+  <h2>Где пересекаетесь</h2>
+  <div class="scroll"><table>
+    <tr><th>Точка</th><th>Владелец</th><th>Что согласовать</th></tr>
+    <tr><td><code>Viper.Contracts</code> (DTO)</td><td><span class="pill A">A</span></td><td>B ревьюит: хватает ли полей экранам</td></tr>
+    <tr><td><code>Viper.Data</code> (сущности)</td><td><span class="pill B">B</span></td><td>A ревьюит: удобно ли писать запросы</td></tr>
+    <tr><td><code>IApiClient</code></td><td><span class="pill A">A</span></td><td>B им пользуется, не трогает реализацию</td></tr>
+    <tr><td>Правило 600 ₽, остатки</td><td><span class="pill A">A</span> сервер</td><td>B дублирует в UI только для удобства</td></tr>
+    <tr><td>Фотки товаров</td><td><span class="pill B">B</span></td><td>В БД — только имя файла; где лежат и как отдаются — решить вместе</td></tr>
+  </table></div>
+
+  <h2>Ветки в Git</h2>
+<pre>master ← develop ← feature/*
+
+A: feature/architecture   feature/auth        feature/catalog-api
+   feature/cart-api       feature/orders-api  feature/admin-api   feature/api-client
+B: feature/db-schema      feature/db-seed     feature/ui-shell
+   feature/ui-catalog     feature/ui-cart     feature/ui-orders   feature/ui-admin</pre>
+  <p style="margin-top:10px;color:var(--muted);font-size:14px">Маленькие коммиты, PR в develop, второй человек ревьюит — это и есть «реально внесённый профит» в истории.</p>
+
+  <h2>Что каждый объясняет на защите</h2>
+  <div class="split" style="margin-top:0">
+    <div class="card A"><div class="who"><h3>A</h3></div>
+      <p>Слои и почему WPF/Avalonia не ходит в БД. Как хешируется пароль и устроен JWT. Почему правило 600 ₽ и проверка остатка на сервере. Транзакция оформления заказа и снапшот цены.</p></div>
+    <div class="card B"><div class="who"><h3>B</h3></div>
+      <p>ER-схема и почему она в 3НФ. Почему рейтинг считается, а не хранится. Индексы и ограничения. MVVM: ViewModel, команды, биндинги, как экран меняется для гостя/юзера/админа.</p></div>
+  </div>
+</main>
+</body>
+</html>
